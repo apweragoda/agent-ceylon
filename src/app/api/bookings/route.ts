@@ -1,23 +1,9 @@
 import { NextRequest } from 'next/server'
 import { createApiResponse, createApiError, handleApiError } from '@/lib/utils/api-response'
 import { requireAuth } from '@/lib/utils/auth-middleware'
+import { BookingSchema, BookingUpdateSchema } from '@/lib/validations/booking'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { z } from 'zod'
-
-const createBookingSchema = z.object({
-  tour_id: z.string().uuid('Invalid tour ID'),
-  participants: z.number().min(1, 'At least 1 participant required').max(50, 'Maximum 50 participants allowed'),
-  booking_date: z.string().refine(date => {
-    const bookingDate = new Date(date)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return bookingDate >= today
-  }, 'Booking date must be today or in the future'),
-  special_requests: z.string().optional(),
-  contact_info: z.object({
-    phone: z.string().min(1, 'Phone number is required'),
-    emergency_contact: z.string().optional(),
-    dietary_restrictions: z.array(z.string()).optional(),
-    accessibility_needs: z.string().optional()
   })
 })
 
