@@ -4,8 +4,6 @@ import { requireAuth } from '@/lib/utils/auth-middleware'
 import { BookingSchema, BookingUpdateSchema } from '@/lib/validations/booking'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { z } from 'zod'
-  })
-})
 
 const updateBookingSchema = z.object({
   participants: z.number().min(1).max(50).optional(),
@@ -96,7 +94,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     // Validate input
-    const validatedData = createBookingSchema.parse(body)
+    const validatedData = BookingSchema.parse(body)
 
     // Check if tour exists and is available
     const { data: tour, error: tourError } = await supabase
@@ -146,7 +144,7 @@ export async function POST(request: NextRequest) {
         booking_date: validatedData.booking_date,
         total_amount: totalAmount,
         special_requests: validatedData.special_requests,
-        contact_info: validatedData.contact_info,
+        contact_info: validatedData.contact_phone,
         status: 'pending',
         payment_status: 'pending'
       })
